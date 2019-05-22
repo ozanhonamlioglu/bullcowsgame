@@ -1,7 +1,6 @@
 #pragma once
 #ifndef FBULLCOWGAME_H
 #define FBULLCOWGAME_H
-#include <string>
 #include <map>
 #define TMap std::map
 
@@ -40,7 +39,6 @@ public:
 
 private:
     int32 MyCurrentTry;
-    int32 MyMaxTries;
     FString MyHiddenWord;
     bool bGameIsWon;
 
