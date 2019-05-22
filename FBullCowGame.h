@@ -2,6 +2,8 @@
 #ifndef FBULLCOWGAME_H
 #define FBULLCOWGAME_H
 #include <string>
+#include <map>
+#define TMap std::map
 
 using FString = std::string;
 using int32 = int;
@@ -30,17 +32,20 @@ public:
     int32 GetMaxTries() const;
     int32 GetCurrentTry() const;
     int32 GetHiddenWordLength() const;
-
     bool IsGameWon() const;
     EGuessStatus CheckGuessValidity(FString) const;
 
     void Reset();
-    FBullCowCount SubmitGuess(FString Guess);
+    FBullCowCount SubmitValidGuess(FString Guess);
 
 private:
     int32 MyCurrentTry;
     int32 MyMaxTries;
     FString MyHiddenWord;
+    bool bGameIsWon;
+
+    bool IsIsogram(FString) const;
+    bool IsLowerCase(FString) const;
 };
 
 #endif // FBULLCOWGAME_H;

@@ -11,11 +11,8 @@ FBullCowGame::~FBullCowGame()
 
 int32 FBullCowGame::GetMaxTries() const { return MyMaxTries; }
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
-
-int32 FBullCowGame::GetHiddenWordLength() const
-{
-    return MyHiddenWord.length();
-}
+bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
+int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
 
 void FBullCowGame::Reset()
 {
@@ -25,21 +22,17 @@ void FBullCowGame::Reset()
     const FString HIDDEN_WORD = "planet";
     MyHiddenWord = HIDDEN_WORD;
     MyCurrentTry = 1;
+    bGameIsWon = false;
     return;
-}
-
-bool FBullCowGame::IsGameWon() const
-{
-    return false;
 }
 
 EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 {
-    if (false)
+    if (!IsIsogram(Guess))
     {
         return EGuessStatus::Not_Isogram;
     }
-    else if (false)
+    else if (!IsLowerCase(Guess))
     {
         return EGuessStatus::Not_Lowercase;
     }
@@ -54,18 +47,18 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 }
 
 // receives a VALID guess, increments turns and returns count
-FBullCowCount FBullCowGame::SubmitGuess(FString Guess)
+FBullCowCount FBullCowGame::SubmitValidGuess(FString Guess)
 {
-    // increment th return number
+    // increment the return number
     MyCurrentTry++;
 
     // setup a return variable
     FBullCowCount BullCowCount;
 
-    int32 HiddenWordLength = MyHiddenWord.length();
-    for (int32 MHWChar = 0; MHWChar < HiddenWordLength; MHWChar++)
+    int32 WordLength = MyHiddenWord.length();
+    for (int32 MHWChar = 0; MHWChar < WordLength; MHWChar++)
     {
-        for (int32 GChar = 0; GChar < HiddenWordLength; GChar++)
+        for (int32 GChar = 0; GChar < WordLength; GChar++)
         {
             if (Guess[GChar] == MyHiddenWord[MHWChar])
             {
@@ -81,7 +74,54 @@ FBullCowCount FBullCowGame::SubmitGuess(FString Guess)
         }
     }
 
+    if (BullCowCount.Bulls == WordLength)
+    {
+        bGameIsWon = true;
+    }
+    else
+    {
+        bGameIsWon = false;
+    }
+
     // loop through all letters in the guess
     // compare letters against the hidden world
     return BullCowCount;
+}
+
+bool FBullCowGame::IsIsogram(FString Word) const
+{
+    // treat 0 or 1 letter words as isograms
+    if (Word.length() <= 1)
+    {
+        return true;
+    }
+
+    TMap<char, bool> LetterSeen;
+    for (auto Letter : Word)
+    {
+        Letter = tolower(Letter); // handle mixed case
+        if (LetterSeen[Letter])
+        {
+            return false; // we dont have an isogram
+        }
+        else
+        {
+            LetterSeen[Letter] = true;
+        }
+    }
+
+    return true;
+}
+
+bool FBullCowGame::IsLowerCase(FString Word) const
+{
+    for (auto Letter : Word)
+    {
+        if(!islower(Letter))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
